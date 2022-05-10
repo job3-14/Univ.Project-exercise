@@ -12,13 +12,9 @@ public class Solver {
 		int firstString; //1文字目の文字番号
 		char[] strings = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
-		//firstString = first(zigen, strings);
+
 		lowDeck = initList(zigen, strings);
 		deck = findString(zigen,strings, lowDeck);
-		//hint = MasterMind.evaluate(deck);
-		//hint[0] 場所一致
-		//hint[1] 文字列一致
-		//		System.out.println(hint[0] + "\t" + hint[1]);
 
 		MasterMind.submit(deck);
 	}
@@ -57,16 +53,17 @@ public class Solver {
 	//文字列を検索する関数
 	public static char[] findString(int zigen, char[] strings, int[] lowDeck){
 		char[] deck = new char[zigen]; //正解リスト
-		//int[] lowDeck = new int[zigen]; //正解リスト(文字番号)
 		int[] hint = {0,0};
 		int wordCount = 0;
-		while(hint[0]<=zigen){
+		while(true){
 			for(int i=0; i<26; i++){
 				lowDeck[wordCount] = i;
 				deck = convertDeck(zigen, strings, lowDeck);
 				hint = MasterMind.evaluate(deck);
-				if(hint[0] <= wordCount){wordCount++;}
+				if(hint[0] > wordCount){wordCount++;}
+				if(wordCount == zigen){break;};
 			}
+			if(hint[0]==zigen){break;};
 		}
 		return deck;
 	}
@@ -79,7 +76,6 @@ public class Solver {
 		for(int i=0;i<zigen; i++){
 			tmpNumber = lowDeck[i];
 			deck[i] = strings[tmpNumber];
-			System.out.println(tmpNumber);
 		}
 		return deck;
 	}
