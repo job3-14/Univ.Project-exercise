@@ -1,4 +1,6 @@
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 public class Solver {
 
 	public static void answer() {
@@ -54,15 +56,35 @@ public class Solver {
 	public static char[] findString(int zigen, char[] strings, int[] lowDeck){
 		char[] deck = new char[zigen]; //正解リスト
 		int[] hint = {0,0};
+		int[] lastHint = {0,0};
 		int wordCount = 0;
+		int hintFrag = 0;
+		ArrayList<Integer> hintList = new ArrayList<>();
 		while(true){
-			for(int i=0; i<26; i++){
-				lowDeck[wordCount] = i;
+			for(Integer tmp: hintList){
+				lowDeck[wordCount] = tmp;
 				deck = convertDeck(zigen, strings, lowDeck);
 				hint = MasterMind.evaluate(deck);
+				if(hint[1] > lastHint[1]){
+					hintList.remove(tmp);
+					hintFrag = 1;
+				};
+				lastHint = hint;
 				if(hint[0] > wordCount){wordCount++;}
 				if(wordCount == zigen){break;};
 			}
+			for(int i=0; i<26; i++){
+				if(hintFrag == 0){
+					lowDeck[wordCount] = i;
+					deck = convertDeck(zigen, strings, lowDeck);
+					hint = MasterMind.evaluate(deck);
+					if(hint[1] > lastHint[1]){hintList.add(i);};
+					lastHint = hint;
+					if(hint[0] > wordCount){wordCount++;}
+					if(wordCount == zigen){break;};
+				}
+			}
+			hintFrag = 0;
 			if(hint[0]==zigen){break;};
 		}
 		return deck;
