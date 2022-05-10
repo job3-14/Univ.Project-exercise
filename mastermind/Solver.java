@@ -55,37 +55,5 @@ public class Solver {
 	}
 
 
-	// 一文字目の正解文字列を検索する関数
-	// 1文字目の文字番号を返す
-	public static int first(int zigen, char[] strings){
-		int[] hint = new int[2];
-		int[]  hintCheck = {0,0}; //[0]hint0の最大数 [1]文字番号
-		char[] deck = new char[zigen]; //正解リスト
-		//1文字目特定
-		for(int i=0; i<26; i++){
-			deck[0] = strings[i];
-			for(int j=1; j<zigen; j++){
-				deck[j] = strings[0];
-			}
-			hint = MasterMind.evaluate(deck);
-			if(hint[0] >= hintCheck[0]){
-				hintCheck[0] = hint[0];
-				hintCheck[1] = i;
-			}
-			//テスト文////////////////////////////////////
-			//for(int testi=0; testi<zigen; testi++){
-			//	System.out.printf("%s",deck[testi]);
-			//}
-			//System.out.println(" "+hint[0] + " " + hint[1]);
-			//////////////////////////////////////////////
-		}
-
-		return hintCheck[1];
-
-	}
-
-
-
-
 
 }
