@@ -13,6 +13,7 @@ public class Solver {
 		int[] hint = new int[2];
 		int firstString; //1文字目の文字番号
 		char[] strings = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
+		ArrayList<Integer> hintList = new ArrayList<>();
 
 
 		lowDeck = initList(zigen, strings);
@@ -49,6 +50,18 @@ public class Solver {
 			}
 		}
 		return initList;
+	}
+
+	//initListに入っている番号を重複なしに変換する
+	//現時点未使用
+	public static ArrayList<Integer> makeInitHint(int[] initList){
+		ArrayList<Integer> hintList = new ArrayList<>();
+		for(Integer tmp: initList){
+			if(!hintList.contains(tmp)){
+				hintList.add(tmp);
+			}
+		}
+		return hintList;
 	}
 
 
