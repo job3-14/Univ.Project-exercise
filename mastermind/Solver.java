@@ -1,25 +1,23 @@
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 public class Solver {
 
 	public static void answer() {
 		int zigen = MasterMind.getzigen(); //正解文字列の長さ
 		//		System.out.println(zigen);
 		char[] deck = new char[zigen]; //正解リスト
+		int[] lowDeck = new int[zigen]; //正解リスト(文字番号)
 		int limit = MasterMind.getlimit(); //上限回数
 		//		System.out.println(limit);
 		int[] hint = new int[2];
 		int firstString; //1文字目の文字番号
 		char[] strings = {'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
-
-		//firstString = first(zigen, strings);
-		initList(zigen,strings);
+		ArrayList<Integer> hintList = new ArrayList<>();
 
 
-
-		//hint = MasterMind.evaluate(deck);
-		//hint[0] 場所一致
-		//hint[1] 文字列一致
-		//		System.out.println(hint[0] + "\t" + hint[1]);
+		lowDeck = initList(zigen, strings);
+		deck = findString(zigen,strings, lowDeck);
 
 		MasterMind.submit(deck);
 	}
@@ -54,37 +52,68 @@ public class Solver {
 		return initList;
 	}
 
-
-	// 一文字目の正解文字列を検索する関数
-	// 1文字目の文字番号を返す
-	public static int first(int zigen, char[] strings){
-		int[] hint = new int[2];
-		int[]  hintCheck = {0,0}; //[0]hint0の最大数 [1]文字番号
-		char[] deck = new char[zigen]; //正解リスト
-		//1文字目特定
-		for(int i=0; i<26; i++){
-			deck[0] = strings[i];
-			for(int j=1; j<zigen; j++){
-				deck[j] = strings[0];
+	//initListに入っている番号を重複なしに変換する
+	//現時点未使用
+	public static ArrayList<Integer> makeInitHint(int[] initList){
+		ArrayList<Integer> hintList = new ArrayList<>();
+		for(Integer tmp: initList){
+			if(!hintList.contains(tmp)){
+				hintList.add(tmp);
 			}
-			hint = MasterMind.evaluate(deck);
-			if(hint[0] >= hintCheck[0]){
-				hintCheck[0] = hint[0];
-				hintCheck[1] = i;
-			}
-			//テスト文////////////////////////////////////
-			//for(int testi=0; testi<zigen; testi++){
-			//	System.out.printf("%s",deck[testi]);
-			//}
-			//System.out.println(" "+hint[0] + " " + hint[1]);
-			//////////////////////////////////////////////
 		}
-
-		return hintCheck[1];
-
+		return hintList;
 	}
 
 
+	//文字列を検索する関数
+	public static char[] findString(int zigen, char[] strings, int[] lowDeck){
+		char[] deck = new char[zigen]; //正解リスト
+		int[] hint = {0,0};
+		int[] lastHint = {0,0};
+		int wordCount = 0;
+		int hintFrag = 0;
+		ArrayList<Integer> hintList = new ArrayList<>();
+		while(true){
+			for(Integer tmp: hintList){
+				lowDeck[wordCount] = tmp;
+				deck = convertDeck(zigen, strings, lowDeck);
+				hint = MasterMind.evaluate(deck);
+				if(hint[1] > lastHint[1]){
+					hintList.remove(tmp);
+					hintFrag = 1;
+				};
+				lastHint = hint;
+				if(hint[0] > wordCount){wordCount++;}
+				if(wordCount == zigen){break;};
+			}
+			for(int i=0; i<26; i++){
+				if(hintFrag == 0){
+					lowDeck[wordCount] = i;
+					deck = convertDeck(zigen, strings, lowDeck);
+					hint = MasterMind.evaluate(deck);
+					if(hint[1] > lastHint[1]){hintList.add(i);};
+					lastHint = hint;
+					if(hint[0] > wordCount){wordCount++;}
+					if(wordCount == zigen){break;};
+				}
+			}
+			hintFrag = 0;
+			if(hint[0]==zigen){break;};
+		}
+		return deck;
+	}
+
+
+	//文字番号の正解リストを文字列の正解リストに変換する
+	public static char[] convertDeck(int zigen, char[] strings, int[] lowDeck){
+		char[] deck = new char[zigen];
+		int tmpNumber;
+		for(int i=0;i<zigen; i++){
+			tmpNumber = lowDeck[i];
+			deck[i] = strings[tmpNumber];
+		}
+		return deck;
+	}
 
 
 
