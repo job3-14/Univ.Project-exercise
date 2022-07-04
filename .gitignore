@@ -2,3 +2,4 @@ mastermind/.DS_Store
 .DS_Store
 mastermind/*.class
 !mastermind/MasterMind.class
+gold/files-20220701/gold/gold/Solver.class
