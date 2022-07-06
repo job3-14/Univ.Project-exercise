@@ -12,6 +12,7 @@ public class Solver {
 
 		int EvalLimit = Gold.getEvalLimit();
 		int wideSearchLimit = EvalLimit / 2;
+		double[][] scoreAdress = new double[wideSearchLimit][];
 		wideAreaSearch(wideSearchLimit);
 
 
@@ -30,8 +31,33 @@ public class Solver {
 		return scoreAdress;
 	}
 
+	public static void localAreaSearch(double[][] wideAreaAddress){
+		double[] tmpList = new double[10];
+		double[] score= new double[wideAreaAddress.length*30];
+		double[][] localAreaAddress =  new double[wideAreaAddress.length*30][];
+		double minScore = Double.MAX_VALUE;
+		Integer minAddress = 0;
+		for(int i=0; i<wideAreaAddress.length; i++){
+			for(int j=0; j<10; j++){
+				tmpList = wideAreaAddress[i];
+				for(int k=1; k<=3; k++){
+					tmpList[j] += 100;
+					score[i] = Gold.evaluate(tmpList);
+					localAreaAddress[i] = tmpList;
+				}
+			}
+		}
+		for(int i=0;i<score.length; i++){
+			if(minScore > score[i]){
+				minScore = score[i];
+				minAddress = i;
+			}
+		}
+		Gold.submit(localAreaAddress[minAddress]);
+	}
 
-	
+
+
 
 
 	public static double[] makeRandCoordinate(){ //ランダム座標を生成する
